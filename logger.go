@@ -26,7 +26,7 @@ const (
 )
 
 func init() {
-	InitLog(os.Getenv("LOG_LEVEL"))
+	InitLog(getLogLevel())
 }
 
 // Logger logger interface
@@ -132,4 +132,23 @@ func FatalfIf(cond bool, fmt string, args ...interface{}) {
 // FatalIfError if err is not nil, then log to level fatal and call os.Exit
 func FatalIfError(err error) {
 	FatalfIf(err != nil, "fatal error: %v", err)
+}
+
+const logLevelDefault = "INFO"
+
+func isValidLevel(level string) bool {
+	switch strings.ToUpper(level) {
+	case "DEBUG", "INFO", "WARN", "ERROR":
+		return true
+	}
+	return false
+}
+
+func getLogLevel() string {
+	level := os.Getenv("LOG_LEVEL")
+	if !isValidLevel(level) {
+		fmt.Fprintf(os.Stderr, "invalid log level: %s, switching to default: %s\n", level, logLevelDefault)
+		level = logLevelDefault
+	}
+	return level
 }
