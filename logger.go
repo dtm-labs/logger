@@ -147,6 +147,7 @@ func isValidLevel(level string) bool {
 func getLogLevel() string {
 	level := os.Getenv("LOG_LEVEL")
 	if !isValidLevel(level) {
+		fmt.Fprintf(os.Stderr, "invalid log level: %s, switching to default: %s\n", level, logLevelDefault)
 		level = logLevelDefault
 	}
 	return level
